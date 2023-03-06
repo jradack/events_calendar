@@ -1,5 +1,7 @@
 from django.test import TestCase
 from django.utils import timezone
+from django.urls.base import reverse
+from datetime import datetime
 from .models import Event
 
 # Create your tests here.
@@ -37,3 +39,15 @@ class EventTests(TestCase):
         self.assertEqual(
             str(self.event), "Test Concert Name (" + str(timezone.localdate()) + " @ Test Venue)"
         )
+    
+    def test_home_page_status_code(self):
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, 200)
+    
+    def test_home_page_uses_correct_template(self):
+        response = self.client.get(reverse("homepage"))
+        self.assertTemplateUsed(response, "homepage.html")
+
+    def test_home_page_list_contents(self):
+        response = self.client.get(reverse("homepage"))
+        self.assertContains(response, "Test Concert Name")
